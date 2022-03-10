@@ -112,9 +112,10 @@ groups.
 Images {#image-layout}
 ----------------------
 
-The following layout describes the expected Zarr hierarchy for images with
-multiple levels of resolutions and optionally associated labels.
-Note that the number of dimensions is variable between 2 and 5 and that axis names are arbitrary, see [[#multiscale-md]] for details.
+The following layout describes the OME-Zarr hierarchy for images.
+An image is represented as a group of arrays, which together form a multiresolution representation of the that image (also known as an "image pyramid"),
+where each array represents a different scale level. An image is optionally associated with labels, which are stored in another group.
+Note that the number of dimensions of all arrays in the group varies between 2 and 5 and that axis names are arbitrary, see [[#multiscale-md]] for details.
 For this example we assume an image with 5 dimensions and axes called `t,c,z,y,x`.
 
 <pre>
@@ -125,35 +126,35 @@ For this example we assume an image with 5 dimensions and axes called `t,c,z,y,x
 │
 └── 456.zarr                  # Another image (id=456) converted to Zarr.
     │
-    ├── .zgroup               # Each image is a Zarr group, or a folder, of other groups and arrays.
-    ├── .zattrs               # Group level attributes are stored in the .zattrs file and include
+    ├── .zgroup               # Each image is a Zarr group of arrays.
+    ├── .zattrs               # Group-level attributes are stored in the .zattrs file and include
     │                         # "multiscales" and "omero" (see below). In addition, the group level attributes
     │                         # must also contain "_ARRAY_DIMENSIONS" if this group directly contains multi-scale arrays.
     │
     ├── 0                     # Each multiscale level is stored as a separate Zarr array,
     │   ...                   # which is a folder containing chunk files which compose the array.
-    ├── n                     # The name of the array is arbitrary with the ordering defined by
+    ├── n                     # Array names are arbitrary. The "multiscales" metadata defines an ordering
     │   │                     # by the "multiscales" metadata, but is often a sequence starting at 0.
     │   │
     │   ├── .zarray           # All image arrays must be up to 5-dimensional
     │   │                     # with the axis of type time before type channel, before spatial axes.
     │   │
-    │   └─ t                  # Chunks are stored with the nested directory layout.
+    │   └─ t                  # Chunks are stored in a nested directory layout.
     │      └─ c               # All but the last chunk element are stored as directories.
-    │         └─ z            # The terminal chunk is a file. Together the directory and file names
+    │         └─ z            # The terminal chunk is a file. Together, the directory and file names
     │            └─ y         # provide the "chunk coordinate" (t, c, z, y, x), where the maximum coordinate
     │               └─ x      # will be `dimension_size / chunk_size`.
     │
     └── labels
         │
-        ├── .zgroup           # The labels group is a container which holds a list of labels to make the objects easily discoverable
+        ├── .zgroup           # The labels group contains a list of labels to make the objects easily discoverable
         │
-        ├── .zattrs           # All labels will be listed in `.zattrs` e.g. `{ "labels": [ "original/0" ] }`
-        │                     # Each dimension of the label `(t, c, z, y, x)` should be either the same as the
+        ├── .zattrs           # Labels are listed in `.zattrs` e.g. `{ "labels": [ "original/0" ] }`
+        │                     # The size of each dimension of the label `(t, c, z, y, x)` should be either the same as the
         │                     # corresponding dimension of the image, or `1` if that dimension of the label
         │                     # is irrelevant.
         │
-        └── original          # Intermediate folders are permitted but not necessary and currently contain no extra metadata.
+        └── original          # Intermediate groups are permitted but not necessary and currently contain no extra metadata.
             │
             └── 0             # Multiscale, labeled image. The name is unimportant but is registered in the "labels" group above.
                 ├── .zgroup   # Zarr Group which is both a multiscaled image as well as a labeled image.
@@ -202,7 +203,7 @@ A well group SHOULD NOT be present if there are no images in the well.
     │   │   │   ├── .zgroup
     │   │   │   ├── .zattrs   # Implements "multiscales", "omero"
     │   │   │   ├── 0
-    │   │   │   │   ...       # Resolution levels
+    │   │   │   │   ...       # multiscale levels
     │   │   │   ├── n
     │   │   │   └── labels    # Labels (optional)
     │   │   ├── ...           # Fields of view
@@ -235,9 +236,9 @@ If part of [[#multiscale-md]], the length of "axes" MUST be equal to the number 
 "coordinateTransformations" metadata {#trafo-md}
 -------------------------------------
 
-"coordinateTransformations" describe a series of transformations that map between two coordinate spaces (defined by "axes").
-For example, to map a discrete data space of an array to the corresponding physical space.
-It is a list of dictionaries. Each entry describes a single transformation and MUST contain the field "type".
+"coordinateTransformations" is an array of objects that specifies a sequence of transformations that map one coordinate space to another. For example, 
+"coordinateTransformations" could map the discrete data space of an array to a physical space with meaningful units.
+Each element of "coordinateTransformations" is an object that MUST contain the field "type".
 The value of "type" MUST be one of the elements of the `type` column in the table below.
 Additional fields for the entry depend on "type" and are defined by the column `fields`.
 
