@@ -87,7 +87,7 @@ enable next-generation file formats to represent the same bioimaging data
 that can be represented in \[OME-TIFF](http://www.openmicroscopy.org/ome-files/)
 and beyond. However, the conventions will also be usable by HDF5 and other sufficiently advanced
 binary containers. Eventually, we hope, the moniker "next-generation" will no longer be
-applicable, and this will simply be the most efficient, common, and useful representation
+applicable, and the format described here will simply be the most efficient, common, and useful representation
 of bioimaging data, whether during acquisition or sharing in the cloud.
 
 Note: The following text makes use of OME-Zarr [[ome-zarr-py]], the current prototype implementation,
@@ -96,10 +96,10 @@ for all examples.
 On-disk (or in-cloud) layout {#on-disk}
 =======================================
 
-An overview of the layout of an OME-Zarr fileset should make
+An overview of the layout of an OME-Zarr container should make
 understanding the following metadata sections easier. The hierarchy
-is represented here as it would appear locally but could equally
-be stored on a web server to be accessed via HTTP or in object storage
+is represented here as it would appear locally but the same structure can
+be represented on a web server to be accessed via HTTP or in object storage
 like S3 or GCS.
 
 OME-Zarr is an implementation of the OME-NGFF specification using the Zarr
@@ -112,9 +112,12 @@ groups.
 Images {#image-layout}
 ----------------------
 
-The following layout describes the OME-Zarr hierarchy for images.
-An image is represented as a group of arrays, which together form a multiresolution representation of the that image (also known as an "image pyramid"),
-where each array represents a different scale level. An image is optionally associated with labels, which are stored in another group.
+The following schematic describes an example OME-Zarr hierarchy for a single image. 
+An image is represented as a group of arrays, where each array in that group stores a different scale level representation the image. 
+Together, the scale levels form a multiscale representation of the image (also known as an "image pyramid"). 
+The multiscale representation of 
+
+An image is optionally associated with labels, which are stored in another group.
 Note that the number of dimensions of all arrays in the group varies between 2 and 5 and that axis names are arbitrary, see [[#multiscale-md]] for details.
 For this example we assume an image with 5 dimensions and axes called `t,c,z,y,x`.
 
@@ -136,7 +139,7 @@ For this example we assume an image with 5 dimensions and axes called `t,c,z,y,x
     ├── n                     # Array names are arbitrary. The "multiscales" metadata defines an ordering
     │   │                     # by the "multiscales" metadata, but is often a sequence starting at 0.
     │   │
-    │   ├── .zarray           # All image arrays must be up to 5-dimensional
+    │   ├── .zarray           # All image arrays have between 2 and 5 dimensions, inclusive.
     │   │                     # with the axis of type time before type channel, before spatial axes.
     │   │
     │   └─ t                  # Chunks are stored in a nested directory layout.
