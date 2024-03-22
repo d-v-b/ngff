@@ -1488,10 +1488,10 @@ Possible extra rowspan handling
 		}
 	}
 </style>
-  <meta content="Bikeshed version d29f71adb, updated Wed Jul 19 11:08:56 2023 -0700" name="generator">
+  <meta content="Bikeshed version 82ce88815, updated Thu Sep 7 16:33:55 2023 -0700" name="generator">
   <link href="https://ngff.openmicroscopy.org/latest/" rel="canonical">
   <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
-  <meta content="99b8765c0f1b9aa6072b030c8f15f75c082a1e5e" name="document-revision">
+  <meta content="031c5af3c6c902d5ac5783abf1a77dc891ca4980" name="document-revision">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
@@ -2072,7 +2072,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
     <img alt="OME logo (6 circles in a hexagon)" src="https://www.openmicroscopy.org/img/logos/ome-logomark.svg" style="float:right;width:42px;height:42px;"> 
    <h1 class="p-name no-ref" id="title">Next-generation file formats (NGFF)</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2023-08-01">1 August 2023</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Editor’s Draft, <time class="dt-updated" datetime="2024-03-22">22 March 2024</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -2087,7 +2087,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright">Copyright © 2020-2023 <a href="https://www.openmicroscopy.org/"><abbr title="Open Microscopy Environment">OME</abbr></a><sup>®</sup> (<a href="https://dundee.ac.uk/"><abbr title="University of Dundee">U. Dundee</abbr></a>).
+   <p class="copyright" data-fill-with="copyright">Copyright © 2020-2024 <a href="https://www.openmicroscopy.org/"><abbr title="Open Microscopy Environment">OME</abbr></a><sup>®</sup> (<a href="https://dundee.ac.uk/"><abbr title="University of Dundee">U. Dundee</abbr></a>).
 OME trademark rules apply. </p>
    <hr title="Separator for header">
   </div>
@@ -2168,7 +2168,7 @@ intention of removing it in the future. Implementations may be expected (MUST) o
 encouraged (SHOULD) to support the reading of the data, but writing will usually
 be optional (MAY). Examples of transitional metadata include custom additions by
 implementations that are later submitted as a formal specification. (See <a href="#bf2raw">§ 2.2 "bioformats2raw.layout" (transitional)</a>) </p>
-   <p>Some of the JSON examples in this document include commments. However, these are only for
+   <p>Some of the JSON examples in this document include comments. However, these are only for
 clarity purposes and comments MUST NOT be included in JSON objects.</p>
    <h2 class="heading settled" data-level="1" id="on-disk"><span class="secno">1. </span><span class="content">On-disk (or in-cloud) layout</span><a class="self-link" href="#on-disk"></a></h2>
    <p>An overview of the layout of an OME-Zarr fileset should make
@@ -2196,7 +2196,7 @@ For this example we assume an image with 5 dimensions and axes called <code>t,c,
     ├── .zgroup               # Each image is a Zarr group, or a folder, of other groups and arrays.
     ├── .zattrs               # Group level attributes are stored in the .zattrs file and include
     │                         # "multiscales" and "omero" (see below). In addition, the group level attributes
-    │                         # must also contain "_ARRAY_DIMENSIONS" if this group directly contains multi-scale arrays.
+    │                         # may also contain "_ARRAY_DIMENSIONS" for compatibility with xarray if this group directly contains multi-scale arrays.
     │
     ├── 0                     # Each multiscale level is stored as a separate Zarr array,
     │   ...                   # which is a folder containing chunk files which compose the array.
@@ -2549,8 +2549,7 @@ can be found under the "omero" key in the group-level metadata:</p>
     <c- f>"model"</c-><c- p>:</c-> <c- u>"color"</c->                  # <c- u>"color"</c-> or <c- u>"greyscale"</c->
 <c- p>}</c->
 </pre>
-   <p>See https://docs.openmicroscopy.org/omero/5.6.1/developers/Web/WebGateway.html#imgdata
-for more information.</p>
+   <p>See the <a href="https://omero.readthedocs.io/en/stable/developers/Web/WebGateway.html#imgdata">OMERO WebGateway documentation</a> for more information.</p>
    <h3 class="heading settled" data-level="2.6" id="labels-md"><span class="secno">2.6. </span><span class="content">"labels" metadata</span><a class="self-link" href="#labels-md"></a></h3>
    <p>In OME-Zarr, Zarr arrays representing pixel-annotation data are stored in a group called "labels". Some applications--notably image segmentation--produce
 a new image that is in the same coordinate system as a corresponding multiscale image (usually having the same dimensions and coordinate transformations). 
@@ -2667,7 +2666,7 @@ be a string specifying the path to the well subgroup. The <code>path</code> MUST
 the <code>rows</code> list, a file separator (<code>/</code>), and a <code>name</code> from the <code>columns</code> list, in that order.
 The <code>path</code> MUST NOT contain additional leading or trailing directories.
 Each well object MUST contain both a <code>rowIndex</code> key whose value MUST be an integer identifying
-the index into the <code>rows</code> list and a <code>columnIndex</code> key whose value MUST be an integer indentifying
+the index into the <code>rows</code> list and a <code>columnIndex</code> key whose value MUST be an integer identifying
 the index into the <code>columns</code> list. <code>rowIndex</code> and <code>columnIndex</code> MUST be 0-based. The <code>rowIndex</code>, <code>columnIndex</code>, and <code>path</code> MUST all refer to the same row/column pair.</p>
    <p>For example the following JSON object defines a plate with two acquisitions and
 6 wells (2 rows and 3 columns), containing up to 2 fields of view per acquisition.</p>
