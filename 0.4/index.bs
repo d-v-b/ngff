@@ -129,10 +129,17 @@ groups.
 Images {#image-layout}
 ----------------------
 
-The following layout describes the expected Zarr hierarchy for images with
-multiple levels of resolutions and optionally associated labels.
-Note that the number of dimensions is variable between 2 and 5 and that axis names are arbitrary, see [[#multiscale-md]] for details.
-For this example we assume an image with 5 dimensions and axes called `t,c,z,y,x`.
+The following diagram illustrates an example Zarr hierarchy for images with
+multiple levels of resolution and associated labels. 
+
+Some aspects of this example layout are not normative. Specifically:
+
+ - This example features one multiresolution image per Zarr container. The specification permits multiple multiresolution images in a single Zarr container.
+ - This example locates the multiresolution image at the root of the Zarr hierarchy, which is denoted by a path ending with ".zarr". 
+The specification does not require that multiresolution images are located at the root of the Zarr hierarchy.
+ - This example names the resolution levels of the multiresolution image "0", "1", etc. This particular naming convention is not required by the specification.
+ - The multiresolution image in this example contains a subgroup called `labels`. The existence of the `labels` subgroup is optional. See [[#labels-md]] for details.
+ - The multiresolution image in this example has 5 dimensions. This is not required by the specification. See [[#axes-md]] for details on the image dimensionality permitted by the specification. 
 
 <pre>
 .                             # Root folder, potentially in S3,
